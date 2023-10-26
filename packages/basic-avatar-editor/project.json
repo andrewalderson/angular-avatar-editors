@@ -1,5 +1,5 @@
 {
-  "name": "avatar-editor",
+  "name": "basic-avatar-editor",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/basic-avatar-editor/src",
   "prefix": "ngx",
