@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "avatar-editor": ["packages/basic-avatar-editor/src/index.ts"]
+      "avatar-editor": ["packages/basic-avatar-editor/src/index.ts"],
+      "storybook-host": ["testing/storybook-host/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

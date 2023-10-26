@@ -20,6 +20,9 @@
     },
     "e2e": {
       "cache": true
+    },
+    "build-storybook": {
+      "cache": true
     }
   },
   "generators": {
@@ -30,9 +33,9 @@
       "e2eTestRunner": "none"
     },
     "@nx/angular:library": {
-      "style": "scss",
       "linter": "eslint",
       "unitTestRunner": "none",
+      "style": "scss",
       "standalone": "true",
       "prefix": "ngx",
       "skipTests": "true"
@@ -42,6 +45,13 @@
       "standalone": "true",
       "prefix": "ngx",
       "skipTests": "true"
+    }
+  },
+  "tasksRunnerOptions": {
+    "default": {
+      "options": {
+        "cacheableOperations": ["build-storybook"]
+      }
     }
   }
 }
