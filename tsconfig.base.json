@@ -16,6 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "avatar-editor": ["packages/basic-avatar-editor/src/index.ts"],
+      "google-avatar-editor": ["packages/google-avatar-editor/src/index.ts"],
       "microsoft-avatar-editor": [
         "packages/microsoft-avatar-editor/src/index.ts"
       ],

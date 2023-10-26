@@ -1,0 +1,20 @@
+{
+  "name": "google-avatar-editor",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/google-avatar-editor/src",
+  "prefix": "ngx",
+  "tags": [],
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "packages/google-avatar-editor/**/*.ts",
+          "packages/google-avatar-editor/**/*.html"
+        ]
+      }
+    }
+  }
+}
