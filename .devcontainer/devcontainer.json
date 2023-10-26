@@ -17,7 +17,20 @@
 	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {
-			"extensions": ["nrwl.angular-console"]
+			"extensions": [
+				"nrwl.angular-console",
+				"angular.ng-template",
+				"nrwl.angular-console",
+				"esbenp.prettier-vscode",
+				"dbaeumer.vscode-eslint"
+			],
+			"settings": {
+				"editor.codeActionsOnSave": {
+				  "source.organizeImports": true,
+				  "source.fixAll": true
+				},
+				"editor.formatOnSave": true
+			  }
 		}
 	}
 
