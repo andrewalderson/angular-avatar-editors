@@ -2,6 +2,7 @@
   display: block;
   position: relative;
   box-sizing: border-box;
+  outline: 0;
 }
 
 img[ngxAvatarEditorImage] {
@@ -10,11 +11,22 @@ img[ngxAvatarEditorImage] {
 
 #shade {
   box-sizing: border-box;
-  display: block;
   position: absolute;
   inset: 0;
   border-radius: 50%;
   border: 2px solid rgba(255, 255, 255, 0.7);
   outline: max(100vw, 100vh) solid rgba(255, 255, 255, 0.4);
   pointer-events: none;
+}
+
+#focus-indicator {
+  box-sizing: border-box;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+:host(:focus-visible) {
+  #focus-indicator {
+    outline: 2px solid;
+  }
 }

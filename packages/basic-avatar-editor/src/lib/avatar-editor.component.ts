@@ -5,6 +5,7 @@ import {
   Component,
   ContentChild,
   ElementRef,
+  HostBinding,
   ViewEncapsulation,
   inject,
 } from '@angular/core';
@@ -21,6 +22,8 @@ import { NgxAvatarEditorImageDirective } from './avatar-editor-image.directive';
 })
 export class NgxAvatarEditorComponent implements AfterViewInit {
   #elementRef: ElementRef<HTMLElement> = inject(ElementRef);
+
+  @HostBinding('attr.tabIndex') _tabIndex = 0;
 
   @ContentChild(NgxAvatarEditorImageDirective)
   _image!: NgxAvatarEditorImageDirective;
