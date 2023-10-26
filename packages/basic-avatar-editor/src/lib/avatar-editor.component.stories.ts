@@ -1,26 +1,20 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
-import { NgxAvatarEditorImageDirective } from './avatar-editor-image.directive';
+import { type Meta, type StoryObj } from '@storybook/angular';
 import { NgxAvatarEditorComponent } from './avatar-editor.component';
 
 const meta: Meta<NgxAvatarEditorComponent> = {
   component: NgxAvatarEditorComponent,
   title: 'Components/BasicAvatarEditor',
-  decorators: [
-    moduleMetadata({
-      imports: [NgxAvatarEditorImageDirective],
-    }),
-  ],
   parameters: {
     layout: 'centered',
   },
 };
 export default meta;
-type Story = StoryObj<NgxAvatarEditorComponent & HTMLImageElement>;
+type Story = StoryObj<NgxAvatarEditorComponent>;
 
 const Template: Story = {
   render: (args) => ({
     props: args,
-    template: `<ngx-avatar-editor style="width: 256px; height: 256px;"><img ngxAvatarEditorImage [src]="src"/></ngx-avatar-editor>`,
+    template: `<ngx-avatar-editor style="width: 256px; height: 256px;" [src]="src" />`,
   }),
 };
 

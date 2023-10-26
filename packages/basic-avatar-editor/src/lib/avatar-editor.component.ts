@@ -3,10 +3,11 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
-  ContentChild,
   DestroyRef,
   ElementRef,
   HostBinding,
+  Input,
+  ViewChild,
   ViewEncapsulation,
   inject,
 } from '@angular/core';
@@ -18,7 +19,7 @@ import { NgxAvatarEditorImageDirective } from './avatar-editor-image.directive';
 @Component({
   selector: 'ngx-avatar-editor',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NgxAvatarEditorImageDirective],
   templateUrl: './avatar-editor.component.html',
   styleUrls: ['./avatar-editor.component.scss'],
   encapsulation: ViewEncapsulation.ShadowDom,
@@ -31,7 +32,9 @@ export class NgxAvatarEditorComponent implements AfterViewInit {
 
   @HostBinding('attr.tabIndex') _tabIndex = 0;
 
-  @ContentChild(NgxAvatarEditorImageDirective)
+  @Input({ required: true }) src!: string;
+
+  @ViewChild(NgxAvatarEditorImageDirective)
   _image!: NgxAvatarEditorImageDirective;
 
   ngAfterViewInit(): void {
