@@ -24,7 +24,7 @@
       "executor": "@storybook/angular:build-storybook",
       "outputs": ["{options.outputDir}"],
       "options": {
-        "outputDir": "dist/storybook/component-host",
+        "outputDir": "dist/storybook/storybook-host",
         "configDir": "testing/storybook-host/.storybook",
         "browserTarget": "storybook-host:build-storybook",
         "compodoc": false
