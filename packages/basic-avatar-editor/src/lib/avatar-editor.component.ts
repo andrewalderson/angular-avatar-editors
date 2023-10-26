@@ -11,7 +11,8 @@ import {
   inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { fromEvent, map, tap } from 'rxjs';
+import { PointerTrackerFactory } from 'gestures';
+import { filter, fromEvent, map, switchMap, takeUntil, tap } from 'rxjs';
 import { NgxAvatarEditorImageDirective } from './avatar-editor-image.directive';
 
 @Component({
@@ -26,6 +27,7 @@ import { NgxAvatarEditorImageDirective } from './avatar-editor-image.directive';
 export class NgxAvatarEditorComponent implements AfterViewInit {
   #destroyRef = inject(DestroyRef);
   #elementRef: ElementRef<HTMLElement> = inject(ElementRef);
+  #pointerTrackerFactory = inject(PointerTrackerFactory);
 
   @HostBinding('attr.tabIndex') _tabIndex = 0;
 
@@ -64,5 +66,25 @@ export class NgxAvatarEditorComponent implements AfterViewInit {
         })
       )
       .subscribe(({ step, origin }) => this._image._scaleBy(step, origin));
+
+    const pointerTracker = this.#pointerTrackerFactory.attach(element);
+    pointerTracker.start
+      .pipe(
+        takeUntilDestroyed(this.#destroyRef),
+        filter(() => pointerTracker.pointers.size === 1),
+        switchMap(() =>
+          pointerTracker.move.pipe(
+            takeUntil(pointerTracker.end),
+            tap((event) => element.setPointerCapture(event.pointerId)),
+            map(() => Array.from(pointerTracker.pointers.values()))
+          )
+        )
+      )
+      .subscribe((pointers) => {
+        const deltaX = pointers[0].current.x - pointers[0].previous.x;
+        const deltaY = pointers[0].current.y - pointers[0].previous.y;
+
+        this._image._translateBy(deltaX, deltaY);
+      });
   }
 }
