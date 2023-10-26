@@ -1,9 +1,9 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   ViewEncapsulation,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'ngx-avatar-editor',
@@ -14,4 +14,4 @@ import { CommonModule } from '@angular/common';
   encapsulation: ViewEncapsulation.ShadowDom,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AvatarEditorComponent {}
+export class NgxAvatarEditorComponent {}
