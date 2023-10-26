@@ -20,7 +20,7 @@ type Story = StoryObj<NgxAvatarEditorComponent & HTMLImageElement>;
 const Template: Story = {
   render: (args) => ({
     props: args,
-    template: `<ngx-avatar-editor><img ngxAvatarEditorImage [src]="src"/></ngx-avatar-editor>`,
+    template: `<ngx-avatar-editor style="width: 256px; height: 256px;"><img ngxAvatarEditorImage [src]="src"/></ngx-avatar-editor>`,
   }),
 };
 
