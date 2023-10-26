@@ -1,0 +1,20 @@
+{
+  "name": "microsoft-avatar-editor",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/microsoft-avatar-editor/src",
+  "prefix": "ngx",
+  "tags": [],
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "packages/microsoft-avatar-editor/**/*.ts",
+          "packages/microsoft-avatar-editor/**/*.html"
+        ]
+      }
+    }
+  }
+}
