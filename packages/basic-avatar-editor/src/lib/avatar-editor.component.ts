@@ -3,7 +3,6 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
-  DestroyRef,
   ElementRef,
   HostBinding,
   Input,
@@ -11,9 +10,7 @@ import {
   ViewEncapsulation,
   inject,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MouseWheelZoomDirective, PointerTrackerFactory } from 'gestures';
-import { filter, map, switchMap, takeUntil, tap } from 'rxjs';
+import { MouseWheelZoomDirective, PointerDragDirective } from 'gestures';
 import { NgxAvatarEditorImageDirective } from './avatar-editor-image.directive';
 
 @Component({
@@ -24,12 +21,11 @@ import { NgxAvatarEditorImageDirective } from './avatar-editor-image.directive';
   styleUrls: ['./avatar-editor.component.scss'],
   encapsulation: ViewEncapsulation.ShadowDom,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  hostDirectives: [MouseWheelZoomDirective],
+  hostDirectives: [MouseWheelZoomDirective, PointerDragDirective],
 })
 export class NgxAvatarEditorComponent implements AfterViewInit {
-  #destroyRef = inject(DestroyRef);
   #elementRef: ElementRef<HTMLElement> = inject(ElementRef);
-  #pointerTrackerFactory = inject(PointerTrackerFactory);
+  #pointerDrag = inject(PointerDragDirective, { self: true });
   #wheelZoom = inject(MouseWheelZoomDirective, { self: true });
 
   @HostBinding('attr.tabIndex') _tabIndex = 0;
@@ -48,24 +44,8 @@ export class NgxAvatarEditorComponent implements AfterViewInit {
       this._image._scaleBy(step, globalOrigin)
     );
 
-    const pointerTracker = this.#pointerTrackerFactory.attach(element);
-    pointerTracker.start
-      .pipe(
-        takeUntilDestroyed(this.#destroyRef),
-        filter(() => pointerTracker.pointers.size === 1),
-        switchMap(() =>
-          pointerTracker.move.pipe(
-            takeUntil(pointerTracker.end),
-            tap((event) => element.setPointerCapture(event.pointerId)),
-            map(() => Array.from(pointerTracker.pointers.values()))
-          )
-        )
-      )
-      .subscribe((pointers) => {
-        const deltaX = pointers[0].current.x - pointers[0].previous.x;
-        const deltaY = pointers[0].current.y - pointers[0].previous.y;
-
-        this._image._translateBy(deltaX, deltaY);
-      });
+    this.#pointerDrag.moveBy.subscribe(({ deltaX, deltaY }) => {
+      this._image._translateBy(deltaX, deltaY);
+    });
   }
 }
