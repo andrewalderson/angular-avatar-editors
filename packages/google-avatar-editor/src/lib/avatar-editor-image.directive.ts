@@ -78,7 +78,6 @@ export class NgxAvatarEditorImageDirective implements OnInit {
    * @param globalOrigin A point in global cartesian coordinates to apply the scale at. These will be converted to coodinates centered on the image
    */
   _scaleBy(step: number, globalOrigin?: DOMPointReadOnly) {
-    console.log('SCALE BY: ', step, globalOrigin);
     // translate the step, which is positive or negative to a scale centered on 1
     // when scaling a matrix '1' is the default scale so passing a 1 to the scale method
     // would not scale the matrix
