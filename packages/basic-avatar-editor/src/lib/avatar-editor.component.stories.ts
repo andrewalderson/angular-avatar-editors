@@ -11,15 +11,7 @@ const meta: Meta<NgxAvatarEditorComponent> = {
 export default meta;
 type Story = StoryObj<NgxAvatarEditorComponent>;
 
-const Template: Story = {
-  render: (args) => ({
-    props: args,
-    template: `<ngx-avatar-editor style="width: 256px; height: 256px;" [src]="src" />`,
-  }),
-};
-
 export const Primary: Story = {
-  ...Template,
   args: {
     src: 'grace-hilty-uvAhJHLul_Q-unsplash.jpg',
   },
