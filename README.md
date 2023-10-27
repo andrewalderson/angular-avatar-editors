@@ -40,7 +40,7 @@ A replication of the current Avatar Editor used by Google. It uses an `img` elem
   - ✅ Move image with Mouse
   - ✅ Move image with Touch
   - 💤 Move image with Keyboard
-  - 🟡 Rotate image with external controls
+  - ✅ Rotate image with external controls
   - 💤 Accessiblity
     - 💤 Screen reader support
 
@@ -49,7 +49,7 @@ A replication of the current Avatar Editor used by Google. It uses an `img` elem
 A replication of the current Avatar Editor used by Microsoft. It uses a `canvas` element to render the transformed image.
 
 - Features
-  - 💤 Fit image on load
+  - 🟡 Fit image on load
   - 💤 Zoom image with Mouse Wheel
   - 💤 Zoom image with Touch (Pinch Zoom)
   - 💤 Zoom image with external controls
