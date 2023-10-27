@@ -7,7 +7,9 @@ import {
   Input,
   ViewChild,
   ViewEncapsulation,
+  inject,
 } from '@angular/core';
+import { MouseWheelZoomDirective } from 'gestures';
 import { NgxAvatarEditorImageDirective } from './avatar-editor-image.directive';
 
 @Component({
@@ -18,8 +20,11 @@ import { NgxAvatarEditorImageDirective } from './avatar-editor-image.directive';
   styleUrls: ['./avatar-editor.component.scss'],
   encapsulation: ViewEncapsulation.ShadowDom,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  hostDirectives: [MouseWheelZoomDirective],
 })
 export class NgxAvatarEditorComponent implements AfterViewInit {
+  #wheelZoom = inject(MouseWheelZoomDirective, { self: true });
+
   @Input({ required: true }) src!: string;
 
   @ViewChild('canvas') _canvas!: ElementRef<HTMLElement>;
@@ -31,5 +36,9 @@ export class NgxAvatarEditorComponent implements AfterViewInit {
     const canvasElement = this._canvas.nativeElement;
 
     this._image._setCropBounds(canvasElement.getBoundingClientRect());
+
+    this.#wheelZoom.zoomBy.subscribe(({ step, globalOrigin }) =>
+      this._image._scaleBy(step, globalOrigin)
+    );
   }
 }
