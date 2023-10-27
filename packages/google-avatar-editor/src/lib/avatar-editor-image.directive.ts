@@ -72,30 +72,6 @@ export class NgxAvatarEditorImageDirective implements OnInit {
     this.#cropBounds.set(bounds);
   }
 
-  #fitImage(cropBounds: DOMRectReadOnly, imageSize: ImageSize) {
-    const { width, height } = cropBounds;
-    if (width === 0 || height === 0) {
-      return;
-    }
-    const { naturalWidth, naturalHeight } = imageSize;
-    if (naturalWidth === 0 || naturalHeight === 0) {
-      return;
-    }
-    const x = (width - naturalWidth) / 2;
-    const y = (height - naturalHeight) / 2;
-
-    this.#matrix = new DOMMatrix([
-      this.#minScale(),
-      0,
-      0,
-      this.#minScale(),
-      x,
-      y,
-    ]);
-
-    this.#setTransform(this.#matrix);
-  }
-
   /**
    * Scales the image by a relative value optionally at a specified point on the image
    * @param step The delta value to apple to the scale - positive means scale up and negative means scale down
@@ -255,6 +231,31 @@ export class NgxAvatarEditorImageDirective implements OnInit {
     this.#currentScale *= scale;
     this.#setTransform(this.#matrix);
   }
+
+  #fitImage(cropBounds: DOMRectReadOnly, imageSize: ImageSize) {
+    const { width, height } = cropBounds;
+    if (width === 0 || height === 0) {
+      return;
+    }
+    const { naturalWidth, naturalHeight } = imageSize;
+    if (naturalWidth === 0 || naturalHeight === 0) {
+      return;
+    }
+    const x = (width - naturalWidth) / 2;
+    const y = (height - naturalHeight) / 2;
+
+    this.#matrix = new DOMMatrix([
+      this.#minScale(),
+      0,
+      0,
+      this.#minScale(),
+      x,
+      y,
+    ]);
+
+    this.#setTransform(this.#matrix);
+  }
+
   #setTransform(matrix?: DOMMatrix) {
     if (!matrix) {
       return;
