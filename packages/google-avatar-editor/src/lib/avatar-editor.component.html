@@ -1,6 +1,14 @@
-<div #canvas id="canvas">
-  <img ngxAvatarEditorImage [src]="src" />
+<div id="editor">
+  <div #canvas id="canvas">
+    <img ngxAvatarEditorImage [src]="src" />
+  </div>
+  <div id="transform-frame">
+    <div id="shade"></div>
+  </div>
 </div>
-<div id="transform-frame">
-  <div id="shade"></div>
+<div id="controls">
+  <button mat-flat-button color="primary" (click)="_rotateBy(-90)">
+    <mat-icon>rotate_90_degrees_ccw</mat-icon>
+    <span>Rotate</span>
+  </button>
 </div>

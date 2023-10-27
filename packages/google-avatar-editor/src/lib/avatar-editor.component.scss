@@ -8,6 +8,17 @@
   height: 1000px;
   width: 840px;
   background: #2e3035;
+}
+
+#editor {
+  position: relative;
+  box-sizing: border-box;
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
   container: host / size;
 }
@@ -57,4 +68,14 @@ img[ngxAvatarEditorImage] {
     width: auto;
     height: var(--_canvas-size);
   }
+}
+
+#controls {
+  height: 100px;
+  width: 100%;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }

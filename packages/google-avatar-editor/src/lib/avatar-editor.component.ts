@@ -6,19 +6,24 @@ import {
   ElementRef,
   Input,
   ViewChild,
-  ViewEncapsulation,
   inject,
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MouseWheelZoomDirective, PointerDragDirective } from 'gestures';
 import { NgxAvatarEditorImageDirective } from './avatar-editor-image.directive';
 
 @Component({
   selector: 'ngx-avatar-editor',
   standalone: true,
-  imports: [CommonModule, NgxAvatarEditorImageDirective],
+  imports: [
+    CommonModule,
+    NgxAvatarEditorImageDirective,
+    MatButtonModule,
+    MatIconModule,
+  ],
   templateUrl: './avatar-editor.component.html',
   styleUrls: ['./avatar-editor.component.scss'],
-  encapsulation: ViewEncapsulation.ShadowDom,
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [MouseWheelZoomDirective, PointerDragDirective],
 })
@@ -45,5 +50,9 @@ export class NgxAvatarEditorComponent implements AfterViewInit {
     this.#pointerDrag.moveBy.subscribe(({ deltaX, deltaY }) => {
       this._image._translateBy(deltaX, deltaY);
     });
+  }
+
+  protected _rotateBy(degrees: number) {
+    this._image._rotateBy(degrees);
   }
 }

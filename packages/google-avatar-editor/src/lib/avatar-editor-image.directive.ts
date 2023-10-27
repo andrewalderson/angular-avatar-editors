@@ -55,6 +55,8 @@ export class NgxAvatarEditorImageDirective implements OnInit {
   );
   #currentScale = 0;
 
+  #currentRotation = 0;
+
   ngOnInit(): void {
     combineLatest([
       toObservable(this.#cropBounds, { injector: this.#injector }),
@@ -118,6 +120,7 @@ export class NgxAvatarEditorImageDirective implements OnInit {
             // negative ty value is above center
             .translateSelf(currentImageCenter.x, currentImageCenter.y)
             .scaleSelf(this.#currentScale)
+            .rotateSelf(this.#currentRotation)
             .invertSelf()
         );
 
@@ -168,7 +171,7 @@ export class NgxAvatarEditorImageDirective implements OnInit {
       const unscaledTranslatePercentageFromCenter = new DOMPointReadOnly(
         tx / (image.naturalWidth / 2),
         ty / (image.naturalHeight / 2)
-      );
+      ).matrixTransform(new DOMMatrix().rotateSelf(this.#currentRotation));
 
       // where the element center will be after the transform
       // if tx and ty are not adjusted
@@ -201,6 +204,7 @@ export class NgxAvatarEditorImageDirective implements OnInit {
       const { x: cx, y: cy } = nextElementCenter.matrixTransform(
         new DOMMatrix()
           .translateSelf(this.#cropBoundsCenter().x, this.#cropBoundsCenter().y)
+          .rotateSelf(this.#currentRotation)
           .invertSelf()
       );
 
@@ -268,6 +272,7 @@ export class NgxAvatarEditorImageDirective implements OnInit {
     const { x: cx, y: cy } = currentImageCenter.matrixTransform(
       new DOMMatrix()
         .translateSelf(this.#cropBoundsCenter().x, this.#cropBoundsCenter().y)
+        .rotateSelf(this.#currentRotation)
         .invertSelf()
     );
 
@@ -285,6 +290,46 @@ export class NgxAvatarEditorImageDirective implements OnInit {
     this.#matrix?.translateSelf(tx, ty);
 
     return this.#setTransform(this.#matrix);
+  }
+
+  _rotateBy(degrees: number) {
+    // when we rotate we need to ensure that any image sides
+    // remain outside the sides of the canvas
+    // this could happen when the image is dragged
+    const image = this.#elementRef.nativeElement;
+    const currentImageBounds: DOMRectReadOnly = image.getBoundingClientRect();
+
+    // the center of the image in global (client) coordinates
+    const currentImageCenter = new DOMPointReadOnly(
+      currentImageBounds.left + currentImageBounds.width / 2,
+      currentImageBounds.top + currentImageBounds.height / 2
+    );
+
+    // the location of the image center relative to the parent center
+    // scaled to the current size of the image and after the current rotation has been applied
+    const { x: cx, y: cy } = currentImageCenter.matrixTransform(
+      new DOMMatrix()
+        .translateSelf(this.#cropBoundsCenter().x, this.#cropBoundsCenter().y)
+        .scaleSelf(this.#currentScale)
+        .rotateSelf(this.#currentRotation)
+        .invertSelf()
+    );
+
+    // IMPORTANT - update rotation before next transform
+    this.#currentRotation += degrees;
+    // the location of the image center relative to the parent center
+    // scaled to the current size of the image and after the new rotation has been applied
+    const { x: tx, y: ty } = currentImageCenter.matrixTransform(
+      new DOMMatrix()
+        .translateSelf(this.#cropBoundsCenter().x, this.#cropBoundsCenter().y)
+        .scaleSelf(this.#currentScale)
+        .rotateSelf(this.#currentRotation)
+        .invertSelf()
+    );
+
+    this.#matrix?.rotateSelf(degrees).translateSelf(cx - tx, cy - ty);
+
+    this.#setTransform(this.#matrix);
   }
 
   #fitImage(cropBounds: DOMRectReadOnly, imageSize: ImageSize) {
