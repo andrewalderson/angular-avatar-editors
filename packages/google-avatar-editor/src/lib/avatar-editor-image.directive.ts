@@ -256,7 +256,6 @@ export class NgxAvatarEditorImageDirective implements OnInit {
     this.#setTransform(this.#matrix);
   }
   #setTransform(matrix?: DOMMatrix) {
-    console.log('SET TRANSFORM: ', matrix);
     if (!matrix) {
       return;
     }
