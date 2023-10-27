@@ -232,6 +232,62 @@ export class NgxAvatarEditorImageDirective implements OnInit {
     this.#setTransform(this.#matrix);
   }
 
+  _translateBy(deltaX: number, deltaY: number) {
+    // this should never happen but it keeps TypeScript happy
+    // when we spread the matrix values below
+    if (!this.#matrix) {
+      return;
+    }
+    // when we apply the 'translateSelf' to the matrix the tx and ty will be
+    // multiplied by any existing scale and rotation
+    // so need to put the deltaX and deltaY into unscaled space
+    const { a, b, c, d } = this.#matrix;
+    let { x: tx, y: ty } = new DOMPoint(deltaX, deltaY).matrixTransform(
+      new DOMMatrix([a, b, c, d, 0, 0]).invertSelf()
+    );
+    const image = this.#elementRef.nativeElement;
+    const currentImageBounds: DOMRectReadOnly = image.getBoundingClientRect();
+
+    const scaledImageWidth = image.naturalWidth * this.#currentScale;
+    const scaledImageHeight = image.naturalHeight * this.#currentScale;
+
+    const currentImageCenter = new DOMPoint(
+      currentImageBounds.left + currentImageBounds.width / 2,
+      currentImageBounds.top + currentImageBounds.height / 2
+    );
+
+    const imageCenterBoundsHalfWidth =
+      (scaledImageWidth - this.#cropBounds().width) / 2;
+    const imageCenterBoundsHalfHeight =
+      (scaledImageHeight - this.#cropBounds().height) / 2;
+
+    // The current x and y of the center of the image as it is dragged around
+    // when they are in the same place cx and cy will be 0
+    // The distance that the image can be dragged is
+    // the parent canvas center x plus or minus the imageCenterBoundsHalfWidth and
+    // the parent canvas y plus or minus the imageCenterBoundsHalfHeight
+    const { x: cx, y: cy } = currentImageCenter.matrixTransform(
+      new DOMMatrix()
+        .translateSelf(this.#cropBoundsCenter().x, this.#cropBoundsCenter().y)
+        .invertSelf()
+    );
+
+    tx = this.#clamp(
+      tx,
+      -1 * (imageCenterBoundsHalfWidth + cx),
+      imageCenterBoundsHalfWidth - cx
+    );
+    ty = this.#clamp(
+      ty,
+      -1 * (imageCenterBoundsHalfHeight + cy),
+      imageCenterBoundsHalfHeight - cy
+    );
+
+    this.#matrix?.translateSelf(tx, ty);
+
+    return this.#setTransform(this.#matrix);
+  }
+
   #fitImage(cropBounds: DOMRectReadOnly, imageSize: ImageSize) {
     const { width, height } = cropBounds;
     if (width === 0 || height === 0) {
