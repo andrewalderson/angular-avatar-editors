@@ -32,8 +32,8 @@ A very basic avatar editor that uses a `img` element and a CSS Transform with a 
 A replication of the current Avatar Editor used by Google. It uses an `img` element to render the transformed image.
 
 - Features
-  - 🟡 Fit image on load
-  - 💤 Zoom image with Mouse Wheel
+  - ✅ Fit image on load
+  - 🟡 Zoom image with Mouse Wheel
   - 💤 Zoom image with Touch (Pinch Zoom)
   - 💤 Zoom image with external controls
   - 💤 Zoom image with Keyboard
