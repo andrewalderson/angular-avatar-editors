@@ -33,11 +33,11 @@ A replication of the current Avatar Editor used by Google. It uses an `img` elem
 
 - Features
   - ✅ Fit image on load
-  - 🟡 Zoom image with Mouse Wheel
+  - ✅ Zoom image with Mouse Wheel
   - 💤 Zoom image with Touch (Pinch Zoom)
   - 💤 Zoom image with external controls
   - 💤 Zoom image with Keyboard
-  - 💤 Move image with mouse / touch
+  - 🟡 Move image with mouse / touch
   - 💤 Move image with Keyboard
   - 💤 Rotate image with external controls
   - 💤 Accessiblity
