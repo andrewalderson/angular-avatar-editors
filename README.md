@@ -4,14 +4,57 @@
 
 I am using this repository to explore different types of avatar editors I have encountered on the web. Most avatar/images editors I come across aren't concerned with accessiblity os this is the main focus of these projects.
 
-#### Basic Avatar Editor - <mark>under development</mark>
+#### Roadmap
 
-A very basic avatar editor that uses a `img` element and a CSS Transform with a `DOMMatrix`. Supports Mouse, Touch and Keyboard interactions.
+This roadmap outlines the current and future goals for this repository.
 
-#### Microsoft Avatar Editor - <mark>under development</mark>
+- ✅ Complete
+- 🟡 In progress
+- 💤 Not started
 
-A replication of the current Avatar Editor used by Microsoft. It uses a `canvas` element to render the transformed image. Supports Mouse, Touch and Keyboard interactions. Also, supports external controls (sliders and buttons) to edit the image
+## Basic Avatar Editor
 
-#### Google Avatar Editor - <mark>under development</mark>
+A very basic avatar editor that uses a `img` element and a CSS Transform with a `DOMMatrix`. This implementation doesn't support rotation since there is not way to rotate the image with just the mouse. Rotation either requires a touch gesture of an external control.
 
-A replication of the current Avatar Editor used by Google. It uses an `img` element to render the transformed image. Supports Mouse, Touch and Keyboard interactions. Also supports an external button for rotation and a crop selection rectangle for scaling.
+- Features
+  - ✅ Fit image on load
+  - ✅ Zoom image with Mouse Wheel
+  - 💤 Zoom image with Touch (Pinch Zoom)
+  - 💤 Zoom image with Keyboard
+  - ✅ Move image with Mouse
+  - ✅ Move image with Touch
+  - 💤 Move image with Keyboard
+  - 💤 Accessiblity
+    - 💤 Screen reader support
+
+## Google Avatar Editor
+
+A replication of the current Avatar Editor used by Google. It uses an `img` element to render the transformed image.
+
+- Features
+  - 🟡 Fit image on load
+  - 💤 Zoom image with Mouse Wheel
+  - 💤 Zoom image with Touch (Pinch Zoom)
+  - 💤 Zoom image with external controls
+  - 💤 Zoom image with Keyboard
+  - 💤 Move image with mouse / touch
+  - 💤 Move image with Keyboard
+  - 💤 Rotate image with external controls
+  - 💤 Accessiblity
+    - 💤 Screen reader support
+
+## Microsoft Avatar Editor
+
+A replication of the current Avatar Editor used by Microsoft. It uses a `canvas` element to render the transformed image.
+
+- Features
+  - 💤 Fit image on load
+  - 💤 Zoom image with Mouse Wheel
+  - 💤 Zoom image with Touch (Pinch Zoom)
+  - 💤 Zoom image with external controls
+  - 💤 Zoom image with Keyboard
+  - 💤 Move image with mouse / touch
+  - 💤 Move image with Keyboard
+  - 💤 Rotate image with external controls
+  - 💤 Accessiblity
+    - 💤 Screen reader support
