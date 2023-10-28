@@ -1,3 +1,25 @@
 :host {
   display: block;
+  position: relative;
+  box-sizing: border-box;
+  outline: 0;
+  overflow: hidden;
+  width: 256px;
+  height: 600px;
+}
+
+canvas[ngxAvatarEditorCanvas] {
+  width: 256px;
+  height: 256px;
+}
+
+#shade {
+  box-sizing: border-box;
+  position: absolute;
+  inset: 0;
+  max-height: 256px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  outline: max(100vw, 100vh) solid rgba(255, 255, 255, 0.4);
+  pointer-events: none;
 }
