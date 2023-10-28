@@ -49,8 +49,8 @@ A replication of the current Avatar Editor used by Google. It uses an `img` elem
 A replication of the current Avatar Editor used by Microsoft. It uses a `canvas` element to render the transformed image.
 
 - Features
-  - 🟡 Fit image on load
-  - 💤 Zoom image with Mouse Wheel
+  - ✅ Fit image on load
+  - 🟡 Zoom image with Mouse Wheel
   - 💤 Zoom image with Touch (Pinch Zoom)
   - 💤 Zoom image with external controls
   - 💤 Zoom image with Keyboard
