@@ -18,6 +18,10 @@ canvas[ngxAvatarEditorCanvas] {
   height: 256px;
 }
 
+mat-tab-group {
+  height: 100px;
+}
+
 #shade {
   box-sizing: border-box;
   position: absolute;

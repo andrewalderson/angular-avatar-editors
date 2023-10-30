@@ -67,6 +67,10 @@ export class NgxAvatarEditorCanvasDirective implements AfterViewInit {
     this.#translation.set(point);
   }
 
+  _rotateBy(delta: number) {
+    this.#store.absoluteRotation.update((current) => current + delta);
+  }
+
   #loadImage(src: string) {
     this.#image.onload = () => {
       const { naturalWidth, naturalHeight } = this.#image;
@@ -93,9 +97,8 @@ export class NgxAvatarEditorCanvasDirective implements AfterViewInit {
     this.#context.save();
     this.#context.translate(width / 2, height / 2);
     this.#context.transform(1, 0, 0, 1, 0, 0);
-    // add rotation here when we support it
+    this.#context.rotate((this.#store.absoluteRotation() * Math.PI) / 180);
     this.#context.translate((-1 * width) / 2, (-1 * height) / 2);
-    this.#context?.restore();
 
     this.#context.drawImage(
       this.#image,
@@ -104,6 +107,8 @@ export class NgxAvatarEditorCanvasDirective implements AfterViewInit {
       this.#store.imageWidth(),
       this.#store.imageHeight()
     );
+
+    this.#context.restore();
   }
 
   #clamp(value: number, min: number, max: number) {

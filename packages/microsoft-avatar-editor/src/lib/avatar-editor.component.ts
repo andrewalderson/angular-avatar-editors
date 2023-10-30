@@ -8,7 +8,9 @@ import {
   computed,
   inject,
 } from '@angular/core';
+import { MatTabsModule } from '@angular/material/tabs';
 import { NgxAvatarEditorCanvasDirective } from './avatar-editor-canvas.directive';
+import { NgxAvatarEditorRotateControlsComponent } from './avatar-editor-rotate-controls.component';
 import { NgxAvatarEditorZoomControlsComponent } from './avatar-editor-zoom-controls.component';
 import { NgxAvatarEditorStore } from './avatar-editor.store';
 
@@ -19,6 +21,8 @@ import { NgxAvatarEditorStore } from './avatar-editor.store';
     CommonModule,
     NgxAvatarEditorCanvasDirective,
     NgxAvatarEditorZoomControlsComponent,
+    NgxAvatarEditorRotateControlsComponent,
+    MatTabsModule,
   ],
   templateUrl: './avatar-editor.component.html',
   styleUrls: ['./avatar-editor.component.scss'],
@@ -32,6 +36,8 @@ export class NgxAvatarEditorComponent implements AfterViewInit {
 
   @ViewChild(NgxAvatarEditorCanvasDirective)
   _canvas!: NgxAvatarEditorCanvasDirective;
+
+  protected rotateValueFormatFn = (value: number) => `${value}º`;
 
   protected zoomValueFormatFn = (value: number) => `${value}%`;
   protected minZoom = 100;
@@ -59,6 +65,10 @@ export class NgxAvatarEditorComponent implements AfterViewInit {
       return;
     }
     this.zoomBy(value - this.store.relativeScale());
+  }
+
+  protected rotateBy(delta: number) {
+    this._canvas._rotateBy(delta);
   }
 
   ngAfterViewInit(): void {

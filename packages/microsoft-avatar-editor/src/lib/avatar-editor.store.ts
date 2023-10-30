@@ -20,6 +20,8 @@ export class NgxAvatarEditorStore {
     Math.exp(this.relativeScale() * Math.log(this.maximumScale()))
   );
 
+  readonly absoluteRotation = signal(0);
+
   readonly zoomStepSize = computed(() =>
     Math.min(
       1,
