@@ -1,2 +1,15 @@
-<canvas ngxAvatarEditorCanvas [src]="src"></canvas>
-<div id="shade"></div>
+<div id="editor">
+  <canvas ngxAvatarEditorCanvas [src]="src"></canvas>
+  <div id="shade"></div>
+</div>
+<ngx-avatar-editor-zoom-controls
+  [minZoom]="minZoom"
+  [maxZoom]="maxZoom()"
+  [zoomStepValue]="store.zoomStepSize()"
+  [zoomValue]="zoomValue()"
+  [canDecrement]="canDecrementZoom()"
+  [canIncrement]="canIncrementZoom()"
+  [valueFormatFn]="zoomValueFormatFn"
+  (zoomBy)="zoomBy($event)"
+  (zoomTo)="zoomTo($event)"
+/>

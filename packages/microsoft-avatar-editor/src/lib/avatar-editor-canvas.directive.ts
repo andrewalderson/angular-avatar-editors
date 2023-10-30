@@ -28,6 +28,8 @@ export class NgxAvatarEditorCanvasDirective implements AfterViewInit {
 
   #translation = signal(new DOMPointReadOnly());
 
+  readonly _hostElement = this.#elementRef.nativeElement;
+
   // TODO - support passing Files, FileHandles or ArrayBuffers
   @Input({ required: true }) get src() {
     return this.#src;
@@ -47,6 +49,22 @@ export class NgxAvatarEditorCanvasDirective implements AfterViewInit {
       .subscribe(([bounds, size]) => this.#fitImage(bounds, size));
 
     effect(() => this.#draw(this.#translation()), { injector: this.#injector });
+  }
+
+  _scaleBy(step: number) {
+    this.#store.relativeScale.update((value) =>
+      this.#clamp(value + step, 0, 1)
+    );
+
+    // these will scale image from center
+    // when we support wheel zoom we will need to translate this by the origin point
+    // of the wheel zoom
+    const tx = (this.#store.cropBounds().width - this.#store.imageWidth()) / 2;
+    const ty =
+      (this.#store.cropBounds().height - this.#store.imageHeight()) / 2;
+
+    const point = new DOMPointReadOnly(tx, ty);
+    this.#translation.set(point);
   }
 
   #loadImage(src: string) {
@@ -70,9 +88,9 @@ export class NgxAvatarEditorCanvasDirective implements AfterViewInit {
   }
 
   #draw(translation: DOMPointReadOnly) {
-    const { naturalWidth, naturalHeight } = this.#store.imageSize();
     const { width, height } = this.#store.cropBounds();
-    this.#context.fillRect(0, 0, width, height), this.#context.save();
+    this.#context.fillRect(0, 0, width, height);
+    this.#context.save();
     this.#context.translate(width / 2, height / 2);
     this.#context.transform(1, 0, 0, 1, 0, 0);
     // add rotation here when we support it
@@ -83,8 +101,12 @@ export class NgxAvatarEditorCanvasDirective implements AfterViewInit {
       this.#image,
       translation.x,
       translation.y,
-      (naturalWidth * this.#store.absoluteScale()) / this.#store.maximumScale(), // TODO - make these calculations signals in the store
-      (naturalHeight * this.#store.absoluteScale()) / this.#store.maximumScale()
+      this.#store.imageWidth(),
+      this.#store.imageHeight()
     );
+  }
+
+  #clamp(value: number, min: number, max: number) {
+    return Math.min(max, Math.max(min, value));
   }
 }

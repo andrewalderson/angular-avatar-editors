@@ -13,7 +13,38 @@ export class NgxAvatarEditorStore {
       this.imageSize().naturalHeight / this.cropBounds().height
     );
   });
-  // absolute scale is a value between 1 and maximumScale
-  // we start at 1 because this is used as a multiplier
-  readonly absoluteScale = signal(1);
+
+  readonly relativeScale = signal(0);
+  // absolute scale is the current scale of the image as a value between 1 and maximumScale
+  readonly absoluteScale = computed(() =>
+    Math.exp(this.relativeScale() * Math.log(this.maximumScale()))
+  );
+
+  readonly zoomStepSize = computed(() =>
+    Math.min(
+      1,
+      Math.max(
+        0.01,
+        Math.min(this.cropBounds().width, this.cropBounds().height) /
+          (2 *
+            Math.max(
+              this.imageSize().naturalWidth,
+              this.imageSize().naturalHeight
+            ))
+      )
+    )
+  );
+
+  // the imageWidth and imageHeight is the size the image is drawn at in the canvas
+  readonly imageWidth = computed(
+    () =>
+      (this.imageSize().naturalWidth * this.absoluteScale()) /
+      this.maximumScale()
+  );
+
+  readonly imageHeight = computed(
+    () =>
+      (this.imageSize().naturalHeight * this.absoluteScale()) /
+      this.maximumScale()
+  );
 }
