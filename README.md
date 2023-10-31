@@ -20,7 +20,7 @@ A very basic avatar editor that uses a `img` element and a CSS Transform with a 
   - ✅ Fit image on load
   - ✅ Zoom image with Mouse Wheel
   - 💤 Zoom image with Touch (Pinch Zoom)
-  - 💤 Zoom image with Keyboard
+  - 🟡 Zoom image with Keyboard
   - ✅ Move image with Mouse
   - ✅ Move image with Touch
   - 💤 Move image with Keyboard
@@ -50,7 +50,7 @@ A replication of the current Avatar Editor used by Microsoft. It uses a `canvas`
 
 - Features
   - ✅ Fit image on load
-  - 🟡 Zoom image with Mouse Wheel
+  - ✅ Zoom image with Mouse Wheel
   - 💤 Zoom image with Touch (Pinch Zoom)
   - ✅ Zoom image with external controls
   - 💤 Zoom image with Keyboard
