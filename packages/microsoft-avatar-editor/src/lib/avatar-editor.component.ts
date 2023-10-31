@@ -9,7 +9,11 @@ import {
   inject,
 } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
-import { PointerDragDirective } from 'gestures';
+import {
+  MouseWheelZoomDirective,
+  PointerDragDirective,
+  WheelZoomEvent,
+} from 'gestures';
 import { NgxAvatarEditorCanvasDirective } from './avatar-editor-canvas.directive';
 import { NgxAvatarEditorRotateControlsComponent } from './avatar-editor-rotate-controls.component';
 import { NgxAvatarEditorZoomControlsComponent } from './avatar-editor-zoom-controls.component';
@@ -25,6 +29,7 @@ import { NgxAvatarEditorStore } from './avatar-editor.store';
     NgxAvatarEditorRotateControlsComponent,
     MatTabsModule,
     PointerDragDirective,
+    MouseWheelZoomDirective,
   ],
   templateUrl: './avatar-editor.component.html',
   styleUrls: ['./avatar-editor.component.scss'],
@@ -58,8 +63,15 @@ export class NgxAvatarEditorComponent implements AfterViewInit {
     () => this.zoomValue() < this.maxZoom()
   );
 
-  protected zoomBy(step: number): void {
-    this._canvas._scaleBy(step);
+  protected zoomBy(step: number): void;
+  protected zoomBy(wheelZoom: WheelZoomEvent): void;
+  protected zoomBy(stepOrEvent: number | WheelZoomEvent): void {
+    if (typeof stepOrEvent === 'object') {
+      const { step, globalOrigin } = stepOrEvent;
+      this._canvas._scaleBy(step, globalOrigin);
+    } else {
+      this._canvas._scaleBy(stepOrEvent);
+    }
   }
 
   protected zoomTo(value: number) {

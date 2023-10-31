@@ -1,4 +1,10 @@
-<div id="editor" ngxPointerDrag (moveBy)="moveBy($event)">
+<div
+  id="editor"
+  ngxPointerDrag
+  ngxMouseWheelZoom
+  (moveBy)="moveBy($event)"
+  (zoomBy)="zoomBy($event)"
+>
   <canvas ngxAvatarEditorCanvas [src]="src"></canvas>
   <div id="shade"></div>
 </div>

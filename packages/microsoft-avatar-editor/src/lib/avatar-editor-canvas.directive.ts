@@ -54,42 +54,58 @@ export class NgxAvatarEditorCanvasDirective implements AfterViewInit {
     effect(() => this.#draw(this.#translation()), { injector: this.#injector });
   }
 
-  _scaleBy(step: number) {
+  _scaleBy(step: number, globalOrigin?: DOMPointReadOnly) {
     // do these before setting relativeScale so we can do a delta
+    // These are the current top left corner of the image
     const cx = (this.#store.cropBounds().width - this.#store.imageWidth()) / 2;
     const cy =
       (this.#store.cropBounds().height - this.#store.imageHeight()) / 2;
 
+    // read this before updating relativeScale
+    const currentScale = this.#store.absoluteScale();
+
+    // set relativeScale so we have updated values for calculations below
     this.#store.relativeScale.update((value) =>
       this.#clamp(value + step, 0, 1)
     );
 
-    // these will scale image where the current x and y are
-    // when we support wheel zoom we will need to translate this by the origin point
-    // of the wheel zoom
+    if (globalOrigin) {
+      // convert global coordinates to local coordinates
+      const ox = globalOrigin.x - this.#store.cropBounds().x;
+      const oy = globalOrigin.y - this.#store.cropBounds().y;
+      const nx = this.#clamp(
+        ox +
+          ((this.#translation().x - ox) * this.#store.absoluteScale()) /
+            currentScale,
+        this.#store.cropBounds().width - this.#store.imageWidth(),
+        0
+      );
+      const ny = this.#clamp(
+        oy +
+          ((this.#translation().y - oy) * this.#store.absoluteScale()) /
+            currentScale,
+        this.#store.cropBounds().height - this.#store.imageHeight(),
+        0
+      );
+      // TODO - figure out the delta here so we can use _tranlateBy to clamp these values
+      // instead of duplicating code here
+      this.#translation.set(new DOMPointReadOnly(nx, ny));
+
+      // if we calculate a delta here and refactor a bit we can probably just fall through here
+      return;
+    }
+
+    // these will be the top left corner of the image after the new scale (relativeScale) is applied
     const tx = (this.#store.cropBounds().width - this.#store.imageWidth()) / 2;
     const ty =
       (this.#store.cropBounds().height - this.#store.imageHeight()) / 2;
-
     // the delta between the new translation and the previous
     const dx = tx - cx;
     const dy = ty - cy;
 
-    this.#translation.update(
-      ({ x, y }) =>
-        new DOMPointReadOnly(
-          this.#clamp(
-            x + dx,
-            this.#store.cropBounds().width - this.#store.imageWidth(),
-            0
-          ),
-          this.#clamp(
-            y + dy,
-            this.#store.cropBounds().height - this.#store.imageHeight(),
-            0
-          )
-        )
-    );
+    // if the image was dragged we don't want to reset the translation to the top left corner
+    // so we use a delta here
+    this._translateBy(dx, dy);
   }
 
   _rotateBy(delta: number) {
