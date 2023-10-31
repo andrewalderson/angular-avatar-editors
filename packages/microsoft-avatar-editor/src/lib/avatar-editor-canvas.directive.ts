@@ -41,6 +41,9 @@ export class NgxAvatarEditorCanvasDirective implements AfterViewInit {
   #src!: string;
 
   ngAfterViewInit(): void {
+    // we can remove this once we make the current image bounds a computed signal
+    // we need to figure out how to maintain the transaltion while scaling
+    // if it was changed with in _translateBy
     combineLatest([
       toObservable(this.#store.cropBounds, { injector: this.#injector }),
       toObservable(this.#store.imageSize, { injector: this.#injector }),
@@ -52,23 +55,59 @@ export class NgxAvatarEditorCanvasDirective implements AfterViewInit {
   }
 
   _scaleBy(step: number) {
+    // do these before setting relativeScale so we can do a delta
+    const cx = (this.#store.cropBounds().width - this.#store.imageWidth()) / 2;
+    const cy =
+      (this.#store.cropBounds().height - this.#store.imageHeight()) / 2;
+
     this.#store.relativeScale.update((value) =>
       this.#clamp(value + step, 0, 1)
     );
 
-    // these will scale image from center
+    // these will scale image where the current x and y are
     // when we support wheel zoom we will need to translate this by the origin point
     // of the wheel zoom
     const tx = (this.#store.cropBounds().width - this.#store.imageWidth()) / 2;
     const ty =
       (this.#store.cropBounds().height - this.#store.imageHeight()) / 2;
 
-    const point = new DOMPointReadOnly(tx, ty);
-    this.#translation.set(point);
+    // the delta between the new translation and the previous
+    const dx = tx - cx;
+    const dy = ty - cy;
+
+    this.#translation.update(
+      ({ x, y }) =>
+        new DOMPointReadOnly(
+          this.#clamp(
+            x + dx,
+            this.#store.cropBounds().width - this.#store.imageWidth(),
+            0
+          ),
+          this.#clamp(
+            y + dy,
+            this.#store.cropBounds().height - this.#store.imageHeight(),
+            0
+          )
+        )
+    );
   }
 
   _rotateBy(delta: number) {
     this.#store.absoluteRotation.update((current) => current + delta);
+  }
+
+  _translateBy(deltaX: number, deltaY: number) {
+    const { width, height } = this.#store.cropBounds();
+
+    // clamp the x and y between 0 (top left corner of canvas) and how far left and up
+    // we can drag the image at its current size and still remain outside the shade area
+    this.#translation.update(
+      ({ x, y }) =>
+        new DOMPointReadOnly(
+          this.#clamp(x + deltaX, width - this.#store.imageWidth(), 0),
+          this.#clamp(y + deltaY, height - this.#store.imageHeight(), 0)
+        )
+    );
   }
 
   #loadImage(src: string) {
@@ -85,6 +124,12 @@ export class NgxAvatarEditorCanvasDirective implements AfterViewInit {
   ) {
     const { naturalWidth, naturalHeight } = imageSize;
     const { width, height } = cropBounds;
+
+    // we will get rid of this method once we make the
+    // bound sto draw the image a computed signal
+    // because these are basically the same
+    //const x = (this.#store.cropBounds().width - this.#store.imageWidth()) / 2;
+    //const y = (this.#store.cropBounds().height - this.#store.imageHeight()) / 2;
     const x = (width - naturalWidth * this.#store.initialScale()) / 2;
     const y = (height - naturalHeight * this.#store.initialScale()) / 2;
 
@@ -100,6 +145,7 @@ export class NgxAvatarEditorCanvasDirective implements AfterViewInit {
     this.#context.rotate((this.#store.absoluteRotation() * Math.PI) / 180);
     this.#context.translate((-1 * width) / 2, (-1 * height) / 2);
 
+    // TODO - make the bounds the image is drawn at a computed signal
     this.#context.drawImage(
       this.#image,
       translation.x,

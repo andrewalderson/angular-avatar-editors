@@ -9,6 +9,7 @@ import {
   inject,
 } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
+import { PointerDragDirective } from 'gestures';
 import { NgxAvatarEditorCanvasDirective } from './avatar-editor-canvas.directive';
 import { NgxAvatarEditorRotateControlsComponent } from './avatar-editor-rotate-controls.component';
 import { NgxAvatarEditorZoomControlsComponent } from './avatar-editor-zoom-controls.component';
@@ -23,6 +24,7 @@ import { NgxAvatarEditorStore } from './avatar-editor.store';
     NgxAvatarEditorZoomControlsComponent,
     NgxAvatarEditorRotateControlsComponent,
     MatTabsModule,
+    PointerDragDirective,
   ],
   templateUrl: './avatar-editor.component.html',
   styleUrls: ['./avatar-editor.component.scss'],
@@ -71,6 +73,9 @@ export class NgxAvatarEditorComponent implements AfterViewInit {
     this._canvas._rotateBy(delta);
   }
 
+  protected moveBy(point: { deltaX: number; deltaY: number }) {
+    this._canvas._translateBy(point.deltaX, point.deltaY);
+  }
   ngAfterViewInit(): void {
     // TODO - need a resize observer for this element
     const canvasElement = this._canvas._hostElement;
