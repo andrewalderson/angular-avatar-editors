@@ -115,13 +115,20 @@ export class NgxAvatarEditorCanvasDirective implements AfterViewInit {
   _translateBy(deltaX: number, deltaY: number) {
     const { width, height } = this.#store.cropBounds();
 
+    const { x: tx, y: ty } = new DOMPointReadOnly(
+      deltaX,
+      deltaY
+    ).matrixTransform(
+      new DOMMatrix().rotateSelf(this.#store.absoluteRotation()).invertSelf()
+    );
+
     // clamp the x and y between 0 (top left corner of canvas) and how far left and up
     // we can drag the image at its current size and still remain outside the shade area
     this.#translation.update(
       ({ x, y }) =>
         new DOMPointReadOnly(
-          this.#clamp(x + deltaX, width - this.#store.imageWidth(), 0),
-          this.#clamp(y + deltaY, height - this.#store.imageHeight(), 0)
+          this.#clamp(x + tx, width - this.#store.imageWidth(), 0),
+          this.#clamp(y + ty, height - this.#store.imageHeight(), 0)
         )
     );
   }
