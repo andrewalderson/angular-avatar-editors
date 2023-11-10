@@ -51,7 +51,14 @@ export class NgxAvatarEditorCanvasDirective implements AfterViewInit {
       .pipe(takeUntilDestroyed(this.#destroyRef))
       .subscribe(([bounds, size]) => this.#fitImage(bounds, size));
 
-    effect(() => this.#draw(this.#translation()), { injector: this.#injector });
+    effect(
+      () =>
+        this.#draw(
+          this.#translation(),
+          (this.#store.absoluteRotation() * Math.PI) / 180
+        ),
+      { injector: this.#injector }
+    );
   }
 
   _scaleBy(step: number, globalOrigin?: DOMPointReadOnly) {
@@ -159,13 +166,14 @@ export class NgxAvatarEditorCanvasDirective implements AfterViewInit {
     this.#translation.set(new DOMPointReadOnly(x, y));
   }
 
-  #draw(translation: DOMPointReadOnly) {
-    const { width, height } = this.#store.cropBounds();
-    this.#context.fillRect(0, 0, width, height);
+  #draw(translation: DOMPointReadOnly, rotationInRadians: number) {
+    const { width, height } = this.#canvas;
+    // set all pixels to transparent black so can use css to style the background
+    this.#context.clearRect(0, 0, width, height);
     this.#context.save();
+    this.#context.resetTransform();
     this.#context.translate(width / 2, height / 2);
-    this.#context.transform(1, 0, 0, 1, 0, 0);
-    this.#context.rotate((this.#store.absoluteRotation() * Math.PI) / 180);
+    this.#context.rotate(rotationInRadians);
     this.#context.translate((-1 * width) / 2, (-1 * height) / 2);
 
     // TODO - make the bounds the image is drawn at a computed signal
