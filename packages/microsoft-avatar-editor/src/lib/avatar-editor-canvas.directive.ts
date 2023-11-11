@@ -62,11 +62,11 @@ export class NgxAvatarEditorCanvasDirective implements AfterViewInit {
   }
 
   _scaleBy(step: number, globalOrigin?: DOMPointReadOnly) {
+    const { width, height } = this.#store.cropBounds();
     // do these before setting relativeScale so we can do a delta
     // These are the current top left corner of the image
-    const cx = (this.#store.cropBounds().width - this.#store.imageWidth()) / 2;
-    const cy =
-      (this.#store.cropBounds().height - this.#store.imageHeight()) / 2;
+    let cx = (width - this.#store.imageWidth()) / 2;
+    let cy = (height - this.#store.imageHeight()) / 2;
 
     // read this before updating relativeScale
     const currentScale = this.#store.absoluteScale();
@@ -76,40 +76,39 @@ export class NgxAvatarEditorCanvasDirective implements AfterViewInit {
       this.#clamp(value + step, 0, 1)
     );
 
-    if (globalOrigin) {
-      // convert global coordinates to local coordinates
-      const ox = globalOrigin.x - this.#store.cropBounds().x;
-      const oy = globalOrigin.y - this.#store.cropBounds().y;
-      const nx = this.#clamp(
-        ox +
-          ((this.#translation().x - ox) * this.#store.absoluteScale()) /
-            currentScale,
-        this.#store.cropBounds().width - this.#store.imageWidth(),
-        0
-      );
-      const ny = this.#clamp(
-        oy +
-          ((this.#translation().y - oy) * this.#store.absoluteScale()) /
-            currentScale,
-        this.#store.cropBounds().height - this.#store.imageHeight(),
-        0
-      );
-      // TODO - figure out the delta here so we can use _tranlateBy to clamp these values
-      // instead of duplicating code here
-      this.#translation.set(new DOMPointReadOnly(nx, ny));
+    // these will be the top left corner of the image after the new scale (relativeScale) is applied
+    let tx = (width - this.#store.imageWidth()) / 2;
+    let ty = (height - this.#store.imageHeight()) / 2;
+    // the delta between the new translation and the previous
 
-      // if we calculate a delta here and refactor a bit we can probably just fall through here
-      return;
+    if (globalOrigin) {
+      cx = this.#translation().x;
+      cy = this.#translation().y;
+      // convert global coordinates to local coordinates
+      // in the current rotated space
+      const { x: ox, y: oy } = new DOMPoint(
+        globalOrigin.x - this.#store.cropBounds().x,
+        globalOrigin.y - this.#store.cropBounds().y
+      ).matrixTransform(
+        new DOMMatrix()
+          .translateSelf(width / 2, height / 2)
+          .rotateSelf(this.#store.absoluteRotation())
+          .translateSelf((-1 * width) / 2, (-1 * height) / 2)
+          .invertSelf()
+      );
+
+      tx =
+        ox +
+        ((this.#translation().x - ox) * this.#store.absoluteScale()) /
+          currentScale;
+      ty =
+        oy +
+        ((this.#translation().y - oy) * this.#store.absoluteScale()) /
+          currentScale;
     }
 
-    // these will be the top left corner of the image after the new scale (relativeScale) is applied
-    const tx = (this.#store.cropBounds().width - this.#store.imageWidth()) / 2;
-    const ty =
-      (this.#store.cropBounds().height - this.#store.imageHeight()) / 2;
-    // the delta between the new translation and the previous
     const dx = tx - cx;
     const dy = ty - cy;
-
     // if the image was dragged we don't want to reset the translation to the top left corner
     // so we use a delta here
     this._translateBy(dx, dy);
@@ -122,20 +121,13 @@ export class NgxAvatarEditorCanvasDirective implements AfterViewInit {
   _translateBy(deltaX: number, deltaY: number) {
     const { width, height } = this.#store.cropBounds();
 
-    const { x: tx, y: ty } = new DOMPointReadOnly(
-      deltaX,
-      deltaY
-    ).matrixTransform(
-      new DOMMatrix().rotateSelf(this.#store.absoluteRotation()).invertSelf()
-    );
-
     // clamp the x and y between 0 (top left corner of canvas) and how far left and up
     // we can drag the image at its current size and still remain outside the shade area
     this.#translation.update(
       ({ x, y }) =>
         new DOMPointReadOnly(
-          this.#clamp(x + tx, width - this.#store.imageWidth(), 0),
-          this.#clamp(y + ty, height - this.#store.imageHeight(), 0)
+          this.#clamp(x + deltaX, width - this.#store.imageWidth(), 0),
+          this.#clamp(y + deltaY, height - this.#store.imageHeight(), 0)
         )
     );
   }
@@ -167,7 +159,7 @@ export class NgxAvatarEditorCanvasDirective implements AfterViewInit {
   }
 
   #draw(translation: DOMPointReadOnly, rotationInRadians: number) {
-    const { width, height } = this.#canvas;
+    const { width, height } = this.#store.cropBounds();
     // set all pixels to transparent black so can use css to style the background
     this.#context.clearRect(0, 0, width, height);
     this.#context.save();
